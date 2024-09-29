@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authenticateToken';
 import Student from '../models/Student';
 import Admin from '../models/Admin';
+import generateToken from '../config/generateToken';
 
 class UsersController {
     private static async emailExists(model: any, email: string): Promise<boolean> {
@@ -10,14 +11,19 @@ class UsersController {
     }
 
     private static async createUser(model: any, userData: any, res: Response) {
-        const { email } = userData;
-
+        const { email,role } = userData;
         if (await UsersController.emailExists(model, email)) {
             return res.status(400).json({ message: 'Email already exists' });
         }
 
         try {
             const user = await model.create(userData);
+            const token = generateToken({ id: user.id, email: user.email, role: role || 'student' });
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 24 * 60 * 60 * 1000 // 1 day
+              });
             return res.status(201).json({
                 message: `${model.name} created successfully`,
                 user,

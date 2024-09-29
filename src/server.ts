@@ -10,8 +10,9 @@ import router from './routes/router';
 import validateEnv from './config/validateEnv';
 import corsOptions from './config/corsOptions';
 import rateLimiter from './config/rateLimiter';
-import cookieParser from 'cookie-parser'; 
-import './config/database';
+import cookieParser from 'cookie-parser';
+import { sequelize } from './config/database';  
+
 dotenv.config();
 validateEnv();
 
@@ -21,15 +22,20 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
-// app.use(morgan('combined'));
 app.use(credentials);
 app.use(rateLimiter);
 app.use(cors(corsOptions));
 app.set('x-powered-by', false);
-app.use(cookieParser()); 
+app.use(cookieParser());
 
 app.use('/', router);
 
 app.use(handleErrors);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Sync all models with the database
+sequelize.sync({ force: false })  // Set to true if you want to drop and recreate tables every time
+  .then(() => {
+    console.log('Database connected and models synchronized.');
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch((err) => console.error('Error connecting to the database:', err));

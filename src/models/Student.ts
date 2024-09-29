@@ -1,20 +1,25 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 
-class User extends Model {
+class Student extends Model {
   public id!: number;
-  public name!: string;
+  public firstName!: string;
+  public lastName!: string;
   public email!: string;
 }
 
-User.init(
+Student.init(
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    name: {
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -26,8 +31,8 @@ User.init(
   },
   {
     sequelize,
-    modelName: 'User',
+    modelName: 'Student', 
   }
 );
 
-export default User;
+export default Student;

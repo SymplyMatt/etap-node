@@ -10,9 +10,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/create/customer:
+ * /users/create/student:
  *   post:
- *     summary: Create a new customer
+ *     summary: Create a new student
  *     tags: [Users]
  *     requestBody:
  *       required: true
@@ -21,32 +21,30 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               firstName:
  *                 type: string
- *                 example: John Doe
+ *                 example: John
+ *                 description: First name of the student
+ *               lastName:
+ *                 type: string
+ *                 example: Doe
+ *                 description: Last name of the student
  *               email:
  *                 type: string
  *                 format: email
- *                 example: customer@example.com
- *               password:
- *                 type: string
- *                 example: password123
- *               location:
- *                 type: string
- *                 example: New York
- *               phone:
- *                 type: string
- *                 example: +2347012345678
- *                 description: Must be a valid Nigerian phone number starting with +234 or 0
+ *                 example: student@example.com
+ *                 description: Must be a unique and valid email address
  *     responses:
  *       201:
- *         description: Customer created successfully
+ *         description: Student created successfully
  *       400:
  *         description: Invalid input
+ *       500:
+ *         description: Server error
  */
-router.post('/create',
+router.post('/create/student',
     validate,
-    UsersController.getAdmins
+    UsersController.createStudent
 );
 
 export default router;

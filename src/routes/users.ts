@@ -92,6 +92,8 @@ router.post('/create/student',
  *         description: Server error
  */
 router.post('/create/admin',
+    authenticateToken,
+    authenticateAdmin,
     [
         body('firstName').isString().withMessage('First name is required'),
         body('lastName').isString().withMessage('Last name is required'),
@@ -138,6 +140,8 @@ router.post('/create/admin',
  *         description: Server error
  */
 router.get('/students',
+    authenticateToken,
+    authenticateAdmin,
     UsersController.getStudents
 );
 
@@ -181,6 +185,8 @@ router.get('/students',
  *         description: Server error
  */
 router.get('/admins',
+    authenticateToken,
+    authenticateAdmin,
 UsersController.getAdmins
 );
 

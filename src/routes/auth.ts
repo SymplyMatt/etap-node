@@ -1,8 +1,6 @@
 import express from 'express';
 import validate from '../middleware/validate';
 import { body, query } from 'express-validator';
-import UsersController from '../controllers/users';
-import { adminRoles } from '../config/utils';
 import authenticateToken from '../middleware/authenticateToken';
 import authenticateAdmin from '../middleware/authenticateAdmin';
 import AuthController from '../controllers/auth';
@@ -101,6 +99,7 @@ router.post('/login',
  *         description: Failed to logout
  */
 router.post('/logout',
+    authenticateToken,
     AuthController.getLoggedInUser
 );
 

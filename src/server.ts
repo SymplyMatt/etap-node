@@ -32,10 +32,11 @@ app.use('/', router);
 
 app.use(handleErrors);
 
-// Sync all models with the database
-sequelize.sync({ force: false })  // Set to true if you want to drop and recreate tables every time
-  .then(() => {
-    console.log('Database connected and models synchronized.');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => console.error('Error connecting to the database:', err));
+sequelize.sync({ force: false })  
+    .then(() => {
+        console.log('Database connected and models synchronized.');
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch((err) => console.error('Error connecting to the database:', err)
+
+);

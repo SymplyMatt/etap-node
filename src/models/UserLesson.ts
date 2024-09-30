@@ -5,13 +5,14 @@ import Student from './Student';
 import Topic from './Topic'; 
 
 class UserLesson extends Model {
-  public id!: string;             
+  public id!: string;              
   public student!: string;        
   public topic!: string;           
   public subject!: string;         
   public progress!: number;       
   public status!: 'completed' | 'in-progress'; 
   public video!: string | null;   
+  public completedAt!: Date | null; 
 }
 
 UserLesson.init(
@@ -63,11 +64,15 @@ UserLesson.init(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    completedAt: {
+      type: DataTypes.DATE,  
+      allowNull: true,       
+    },
   },
   {
     sequelize,
     modelName: 'UserLesson',
-    timestamps: true,
+    timestamps: true, 
   }
 );
 

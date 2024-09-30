@@ -1,16 +1,16 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
-import Subject from './Subject';
 import Admin from './Admin';
+import Subject from './Subject'; 
 
 class Topic extends Model {
-  public id!: string;
-  public subject!: string;
+  public id!: string; 
+  public subject!: string; 
   public name!: string;
   public description!: string;
-  public banner!: string;
-  public video!: string;
-  public createdBy!: string;
+  public banner!: string | null; 
+  public video!: string | null; 
+  public createdBy!: string; 
   public duration!: number;
 }
 
@@ -22,15 +22,17 @@ Topic.init(
       primaryKey: true,
     },
     subject: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID, 
       allowNull: false,
       references: {
         model: Subject,
         key: 'id',
       },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255), 
       allowNull: false,
     },
     description: {
@@ -38,20 +40,22 @@ Topic.init(
       allowNull: false,
     },
     banner: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255), 
       allowNull: true,
     },
     video: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: true,
     },
     createdBy: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID, 
       allowNull: false,
       references: {
         model: Admin,
         key: 'id',
       },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
     },
     duration: {
       type: DataTypes.INTEGER,
@@ -61,6 +65,7 @@ Topic.init(
   {
     sequelize,
     modelName: 'Topic',
+    timestamps: true,
   }
 );
 

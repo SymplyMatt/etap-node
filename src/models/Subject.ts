@@ -5,7 +5,7 @@ import Admin from './Admin';
 class Subject extends Model {
   public id!: string; 
   public name!: string;
-  public createdBy!: number; 
+  public createdBy!: string; 
   public banner!: string; 
 }
 
@@ -25,7 +25,7 @@ Subject.init(
       },
     },
     createdBy: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: Admin, 

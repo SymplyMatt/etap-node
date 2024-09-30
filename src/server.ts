@@ -12,7 +12,7 @@ import corsOptions from './config/corsOptions';
 import rateLimiter from './config/rateLimiter';
 import cookieParser from 'cookie-parser';
 import { sequelize } from './config/database';  
-
+import './models/associations';
 dotenv.config();
 validateEnv();
 

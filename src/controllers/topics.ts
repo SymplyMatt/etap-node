@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authenticateToken';
-import Topic from '../models/Topic'; // Assuming you have a Topic model
+import Topic from '../models/Topic';
+import Subject from '../models/Subject'; 
 
 class TopicsController {
     public static async createTopic(req: AuthRequest, res: Response) {
@@ -25,7 +26,7 @@ class TopicsController {
     }
 
     public static async modifyTopic(req: AuthRequest, res: Response) {
-        const { id } = req.body; 
+        const { id } = req.body;
         const updatedData = req.body;
 
         try {
@@ -34,7 +35,9 @@ class TopicsController {
             });
 
             if (updated) {
-                const updatedTopic = await Topic.findByPk(id);
+                const updatedTopic = await Topic.findByPk(id, {
+                    include: { model: Subject, as: 'subjectDetails' }, 
+                });
                 return res.status(200).json({
                     message: 'Topic updated successfully',
                     topic: updatedTopic,
@@ -55,7 +58,9 @@ class TopicsController {
         const { id } = req.params;
 
         try {
-            const topic = await Topic.findByPk(id);
+            const topic = await Topic.findByPk(id, {
+                include: { model: Subject, as: 'subjectDetails' }, 
+            });
             if (topic) {
                 return res.status(200).json({
                     message: 'Topic retrieved successfully',
@@ -75,7 +80,9 @@ class TopicsController {
 
     public static async getTopics(req: AuthRequest, res: Response) {
         try {
-            const topics = await Topic.findAll();
+            const topics = await Topic.findAll({
+                include: { model: Subject, as: 'subjectDetails' }, 
+            });
             return res.status(200).json({
                 message: 'Topics retrieved successfully',
                 topics,

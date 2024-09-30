@@ -138,18 +138,60 @@ router.get(
  * @swagger
  * /subjects:
  *   get:
- *     summary: Get all subjects
+ *     summary: Get all subjects with pagination
  *     tags: [Subjects]
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         required: false
+ *         description: Page number to retrieve (default is 1)
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         description: Number of subjects to return per page (default is 10)
+ *         schema:
+ *           type: integer
+ *           default: 10
  *     responses:
  *       200:
  *         description: Subjects retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Subjects retrieved successfully
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 5
+ *                 currentPage:
+ *                   type: integer
+ *                   example: 1
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         example: Mathematics
+ *                       description:
+ *                         type: string
+ *                         example: Study of numbers and shapes
  *       500:
  *         description: Server error
  */
 router.get(
-    '/',    
+    '/',
     validate,
     SubjectsController.getSubjects
 );
-
 export default router;

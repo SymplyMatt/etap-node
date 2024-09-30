@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authenticateToken';
 import Subject from '../models/Subject';
+import Topic from '../models/Topic';
+
 class SubjectsController {
     public static async createSubject(req: AuthRequest, res: Response) {
         const subjectData = {
@@ -54,7 +56,14 @@ class SubjectsController {
         const { id } = req.params;
 
         try {
-            const subject = await Subject.findByPk(id);
+            const subject = await Subject.findOne({
+                where: { id },
+                include: {
+                    model: Topic,
+                    as: 'topics', 
+                },
+            });
+
             if (subject) {
                 return res.status(200).json({
                     message: 'Subject retrieved successfully',
@@ -73,11 +82,26 @@ class SubjectsController {
     }
 
     public static async getSubjects(req: AuthRequest, res: Response) {
+        const page: number = parseInt(req.query.page as string) || 1; 
+        const limit: number = parseInt(req.query.limit as string) || 10; 
+
         try {
-            const subjects = await Subject.findAll();
+            const { count, rows } = await Subject.findAndCountAll({
+                include: {
+                    model: Topic,
+                    as: 'topics', 
+                },
+                limit,
+                offset: (page - 1) * limit, 
+            });
+
+            const totalPages = Math.ceil(count / limit); 
+
             return res.status(200).json({
                 message: 'Subjects retrieved successfully',
-                subjects,
+                totalPages,
+                currentPage: page,
+                subjects: rows,
             });
         } catch (error: any) {
             console.error(error);

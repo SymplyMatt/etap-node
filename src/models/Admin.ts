@@ -2,18 +2,18 @@ import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 
 class Admin extends Model {
-  public id!: number;
+  public id!: string;
   public firstName!: string;
   public lastName!: string;
   public email!: string;
-  public role!: string; 
+  public role!: string;
 }
 
 Admin.init(
   {
     id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     firstName: {
@@ -30,13 +30,13 @@ Admin.init(
       unique: true,
     },
     role: {
-      type: DataTypes.ENUM('admin', 'teacher'), 
+      type: DataTypes.ENUM('admin', 'teacher'),
       allowNull: false,
     },
   },
   {
     sequelize,
-    modelName: 'Admin', 
+    modelName: 'Admin',
   }
 );
 

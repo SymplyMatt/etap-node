@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 
 class Student extends Model {
-  public id!: number;
+  public id!: string; 
   public firstName!: string;
   public lastName!: string;
   public email!: string;
@@ -11,8 +11,8 @@ class Student extends Model {
 Student.init(
   {
     id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID, 
+      defaultValue: DataTypes.UUIDV4, 
       primaryKey: true,
     },
     firstName: {
@@ -31,7 +31,7 @@ Student.init(
   },
   {
     sequelize,
-    modelName: 'Student', 
+    modelName: 'Student',
   }
 );
 

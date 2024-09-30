@@ -5,6 +5,21 @@ import Topic from '../models/Topic';
 import Student from '../models/Student'; 
 import Subject from '../models/Subject'; 
 
+interface LessonDetails {
+    topicId: string;
+    progress: number;
+    status: 'completed' | 'in-progress' | null;
+    createdAt: Date | null ;
+    completedAt: Date | null;
+    duration: number;
+}
+
+interface StudentLessons {
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    lessons: LessonDetails[];
+}
 class LessonsController {
     public static async startLesson(req: AuthRequest, res: Response) {
         const { topicId } = req.body;
@@ -147,27 +162,67 @@ class LessonsController {
     }
 
     public static async getSubjectLessons(req: AuthRequest, res: Response) {
-        const { subjectId } = req.query;  
+        const { subjectId } = req.query;
+    
         try {
-            const lessons = await UserLesson.findAll({
+            // Fetch all topics related to the subject
+            const topics = await Topic.findAll({
                 where: { subject: subjectId },
-                include: [
-                    {
-                        model: Student,
-                        as: 'studentDetails'
-                    },
-                    {
-                        model: Topic,
-                        as: 'topicDetails'
-                    },
-                ],
             });
     
-            return res.status(200).json(lessons);
+            // Fetch all students
+            const students = await Student.findAll({
+            });
+    
+            // Prepare an array to hold the results
+            const results: StudentLessons[] = []; // Define the type here
+    
+            // Loop through each student to gather their UserLesson information for each topic
+            for (const student of students) {
+                const studentLessons: StudentLessons = {
+                    studentId: student.id,
+                    studentName: student.firstName,
+                    studentEmail: student.email,
+                    lessons: [],
+                };
+    
+                for (const topic of topics) {
+                    const userLesson = await UserLesson.findOne({
+                        where: {
+                            student: student.id,
+                            topic: topic.id,
+                        },
+                    });
+                    if (userLesson) {
+                        studentLessons.lessons.push({
+                            topicId: topic.id,
+                            progress: userLesson.progress,
+                            status: userLesson.status,
+                            createdAt: userLesson.createdAt || null,
+                            completedAt:userLesson.completedAt,
+                            duration: topic.duration,
+                        });
+                    } else {
+                        studentLessons.lessons.push({
+                            topicId: topic.id,
+                            progress: 0,
+                            status: null,
+                            createdAt: null,
+                            completedAt:null,
+                            duration: topic.duration,
+                        });
+                    }
+                }
+    
+                results.push(studentLessons);
+            }
+    
+            return res.status(200).json({results, subjectId});
         } catch (error) {
             return res.status(500).json({ message: 'Error retrieving subject lessons', error });
         }
-    }    
+    }
+        
 }
 
 export default LessonsController;

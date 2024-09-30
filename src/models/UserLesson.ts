@@ -13,6 +13,7 @@ class UserLesson extends Model {
   public status!: 'completed' | 'in-progress'; 
   public video!: string | null;   
   public completedAt!: Date | null; 
+  public createdAt?: Date | null; 
 }
 
 UserLesson.init(

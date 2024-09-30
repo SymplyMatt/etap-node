@@ -92,8 +92,8 @@ router.post('/create/student',
  *         description: Server error
  */
 router.post('/create/admin',
-    authenticateToken,
-    authenticateAdmin,
+    // authenticateToken,
+    // authenticateAdmin,
     [
         body('firstName').isString().withMessage('First name is required'),
         body('lastName').isString().withMessage('Last name is required'),

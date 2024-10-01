@@ -32,9 +32,6 @@ const createTopicValidation = [
 ];
 
 const modifyTopicValidation = [
-    param('id')
-        .isUUID()
-        .withMessage('Topic ID must be a valid UUID'),
     ...createTopicValidation, 
 ];
 
@@ -71,7 +68,7 @@ const getTopicsValidation = [
  *               subject:
  *                 type: string
  *                 format: uuid
- *                 example: 123e4567-e89b-12d3-a456-426614174000
+ *                 example: 0f3d0fb1-f977-4f62-a5b2-e11c83c03ec9
  *                 description: Subject ID as UUID
  *               name:
  *                 type: string
@@ -83,15 +80,15 @@ const getTopicsValidation = [
  *                 description: Description of the topic
  *               banner:
  *                 type: string
- *                 example: https://example.com/banner.jpg
+ *                 example: https://res.cloudinary.com/dj2ovlhjc/image/upload/v1727796239/download_2_rambdf.jpg
  *                 description: Optional banner image URL
  *               video:
  *                 type: string
- *                 example: https://example.com/video.mp4
+ *                 example: https://res.cloudinary.com/dj2ovlhjc/video/upload/v1727796354/If__9_to_5_Jobs__Were_Honest_y5ddzg.mp4
  *                 description: Optional video URL
  *               duration:
  *                 type: integer
- *                 example: 60
+ *                 example: 199
  *                 description: Duration of the topic in minutes
  *     responses:
  *       201:
@@ -147,7 +144,6 @@ router.post('/create',
  *             properties:
  *               id:
  *                 type: string
- *                 format: uuid
  *                 example: 123e4567-e89b-12d3-a456-426614174000
  *                 description: ID of the topic to modify
  *               subject:
@@ -165,15 +161,15 @@ router.post('/create',
  *                 description: Updated description of the topic
  *               banner:
  *                 type: string
- *                 example: https://example.com/updated-banner.jpg
+ *                 example: https://res.cloudinary.com/dj2ovlhjc/image/upload/v1727797297/download_pppqhc.png
  *                 description: Optional updated banner image URL
  *               video:
  *                 type: string
- *                 example: https://example.com/updated-video.mp4
+ *                 example: https://res.cloudinary.com/dj2ovlhjc/video/upload/v1727796354/If__9_to_5_Jobs__Were_Honest_y5ddzg.mp4
  *                 description: Optional updated video URL
  *               duration:
  *                 type: integer
- *                 example: 90
+ *                 example: 199
  *                 description: Updated duration of the topic in minutes
  *     responses:
  *       200:
@@ -190,7 +186,7 @@ router.put('/modify',
     authenticateAdmin,
     [
         body('id')
-            .isUUID()
+            .isString()
             .withMessage('Topic ID must be a valid UUID'),
         ...modifyTopicValidation
     ],

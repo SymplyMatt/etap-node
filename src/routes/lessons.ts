@@ -77,7 +77,7 @@ router.post('/update-progress',
             .isUUID()
             .withMessage('Invalid lessonId. It must be a valid UUID.'),
         body('progress')
-            .isInt({ min: 0, max: 100 })
+            .isInt()
             .withMessage('Progress must be an integer between 0 and 100.')
     ], 
     validate, 
@@ -223,6 +223,11 @@ router.get('/get/subject',
     ], 
     validate, 
     LessonsController.getSubjectLessons
+);
+router.get('/get', 
+    authenticateToken,
+    validate, 
+    LessonsController.getLessons
 );
 
 export default router;

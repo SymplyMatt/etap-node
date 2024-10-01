@@ -1,5 +1,6 @@
 const allowedOrigins : String[]= [
    "http://localhost:3000",
+   "http://localhost:5173",
    "http://localhost:1234",
    "https://test-api.rhmstech.com/",
    "https://test-api.rhmstech.com",

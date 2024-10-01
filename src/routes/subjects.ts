@@ -54,17 +54,10 @@ router.post(
 
 /**
  * @swagger
- * /subjects/modify/{id}:
+ * /subjects/modify:
  *   put:
  *     summary: Modify an existing subject
  *     tags: [Subjects]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the subject to modify
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -72,6 +65,10 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
+ *               id:
+ *                 type: string
+ *                 example: 9145060b-c206-430b-a26b-cd5af4a6b832
+ *                 description: ID of the subject to modify
  *               name:
  *                 type: string
  *                 example: Mathematics
@@ -91,10 +88,10 @@ router.post(
  *         description: Server error
  */
 router.put(
-    '/modify/:id',  
+    '/modify',  
     authenticateToken,
     authenticateAdmin,  
-    param('id').isUUID().withMessage('Invalid subject ID'),
+    body('id').isUUID().withMessage('Invalid subject ID'),  
     body('name')
         .optional()
         .isString().withMessage('Subject name must be a string')
@@ -105,6 +102,7 @@ router.put(
     validate,
     SubjectsController.modifySubject
 );
+
 
 /**
  * @swagger

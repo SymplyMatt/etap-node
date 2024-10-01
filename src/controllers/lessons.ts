@@ -24,11 +24,20 @@ class LessonsController {
     public static async startLesson(req: AuthRequest, res: Response) {
         const { topicId } = req.body;
         const studentId = req.id; 
-    
         try {
             const topic = await Topic.findByPk(topicId);
             if (!topic) {
                 return res.status(404).json({ message: 'Topic not found' });
+            }
+            const existingLesson = await UserLesson.findOne({
+                where: {
+                    student: studentId,
+                    topic: topicId,
+                    subject: topic.subject
+                }
+            });
+            if (existingLesson) {
+                return res.status(400).json({ message: 'Lesson already exists' });
             }
             const userLesson = await UserLesson.create({
                 student: studentId,
@@ -43,7 +52,7 @@ class LessonsController {
         } catch (error) {
             return res.status(500).json({ message: 'Error starting lesson', error });
         }
-    }
+    }    
     
     public static async updateLessonProgress(req: AuthRequest, res: Response) {
         const { lessonId, progress } = req.body;
@@ -118,7 +127,6 @@ class LessonsController {
     public static async getUserSubjectLessons(req: AuthRequest, res: Response) {
         const { subjectId } = req.query;  
         const studentId = req.id;
-    
         try {
             const lessons = await UserLesson.findAll({
                 where: { 
@@ -218,6 +226,15 @@ class LessonsController {
             }
     
             return res.status(200).json({results, subjectId});
+        } catch (error) {
+            return res.status(500).json({ message: 'Error retrieving subject lessons', error });
+        }
+    }
+    public static async getLessons(req: AuthRequest, res: Response) {
+        try {
+            const lessons = await UserLesson.findAll();
+    
+            return res.status(200).json({lessons});
         } catch (error) {
             return res.status(500).json({ message: 'Error retrieving subject lessons', error });
         }

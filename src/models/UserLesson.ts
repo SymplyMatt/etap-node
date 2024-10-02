@@ -10,7 +10,7 @@ class UserLesson extends Model {
   public topic!: string;           
   public subject!: string;         
   public progress!: number;       
-  public status!: 'completed' | 'in-progress'; 
+  public status!: 'completed' | 'in-progress' | 'not-started'; 
   public video!: string | null;   
   public completedAt!: Date | null; 
   public createdAt?: Date | null; 

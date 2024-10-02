@@ -78,7 +78,7 @@ router.post('/update-progress',
             .withMessage('Invalid lessonId. It must be a valid UUID.'),
         body('progress')
             .isInt()
-            .withMessage('Progress must be an integer between 0 and 100.')
+            .withMessage('Progress must be an integer')
     ], 
     validate, 
     LessonsController.updateLessonProgress

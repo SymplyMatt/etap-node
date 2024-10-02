@@ -100,7 +100,7 @@ const getTopicsValidation = [
  */
 router.post('/create',
     authenticateToken,
-    authenticateAdmin,
+    // authenticateAdmin,
     [
         body('subject')
             .isUUID()
@@ -183,7 +183,7 @@ router.post('/create',
  */
 router.put('/modify',
     authenticateToken,
-    authenticateAdmin,
+    // authenticateAdmin,
     [
         body('id')
             .isString()

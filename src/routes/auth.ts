@@ -100,7 +100,7 @@ router.post('/login',
  */
 router.post('/logout',
     authenticateToken,
-    AuthController.getLoggedInUser
+    AuthController.logout
 );
 
 

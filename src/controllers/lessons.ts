@@ -8,7 +8,7 @@ import Subject from '../models/Subject';
 interface LessonDetails {
     topicId: string;
     progress: number;
-    status: 'completed' | 'in-progress' | null;
+    status: 'completed' | 'in-progress' | 'not-started' | null;
     createdAt: Date | null ;
     completedAt: Date | null;
     duration: number;
@@ -37,7 +37,7 @@ class LessonsController {
                 }
             });
             if (existingLesson) {
-                return res.status(400).json({ message: 'Lesson already exists' });
+                return res.status(201).json({ message: 'Lesson started successfully', userLesson: existingLesson });
             }
             const userLesson = await UserLesson.create({
                 student: studentId,
@@ -69,14 +69,19 @@ class LessonsController {
             if (userLesson.video !== topic.video) {
                 userLesson.progress = 0;
                 userLesson.video = topic.video;
+                userLesson.status = 'not-started';
             } else {
                 userLesson.progress = progress;
-            }
-            if (userLesson.progress >= topic.duration) {
-                userLesson.status = 'completed';
-                userLesson.completedAt = new Date();
-            } else {
-                userLesson.status = 'in-progress';
+                if (userLesson.progress >= topic.duration) {
+                    userLesson.status = 'completed';
+                    userLesson.completedAt = new Date();
+                }
+                console.log('changing the progress');
+                if(userLesson.status !== 'completed'){
+                    console.log('changing the progress');
+                    
+                    userLesson.status = 'in-progress';
+                }
             }
 
             await userLesson.save();
@@ -105,7 +110,7 @@ class LessonsController {
             });
     
             if (!userLesson) {
-                return res.status(404).json({ message: 'User lesson not found for this topic' });
+                return res.status(201).json({ message: 'User lesson not found for this topic' });
             }
             const topic = await Topic.findByPk(topicId as string);
             if (!topic) {

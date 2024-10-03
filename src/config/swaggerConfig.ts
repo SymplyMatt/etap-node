@@ -6,7 +6,7 @@ dotenv.config();
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'Your API',
+    title: 'E-TAP Test',
     version: '1.0.0',
     description: 'API documentation',
   },

@@ -194,7 +194,7 @@ class LessonsController {
             for (const student of students) {
                 const studentLessons: StudentLessons = {
                     studentId: student.id,
-                    studentName: student.firstName,
+                    studentName: student.firstName + ' ' + student.lastName,
                     studentEmail: student.email,
                     lessons: [],
                 };

@@ -2,6 +2,12 @@
 
 This backend application is developed for the E-TAP technical interview. It provides a robust API for managing topics and associated media.
 
+## Assumptions
+
+- The application assumes that the school has three types of users: students, admins, and teachers.
+- Only admins and teachers can create subjects and assign topics to those subjects.
+- Students, admins, and teachers sign in using their first name and email address, taking a simple approach as most schools do.
+
 ## Technology Stack
 
 - **Database**: PostgreSQL

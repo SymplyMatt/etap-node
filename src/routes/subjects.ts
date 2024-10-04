@@ -5,19 +5,21 @@ import SubjectsController from '../controllers/subjects';
 import { adminRoles } from '../config/utils';
 import authenticateToken from '../middleware/authenticateToken';
 import authenticateAdmin from '../middleware/authenticateAdmin';
+import upload from '../config/multer';
 
 const router = express.Router();
-
 /**
  * @swagger
  * /subjects/create:
  *   post:
  *     summary: Create a new subject
  *     tags: [Subjects]
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -27,8 +29,8 @@ const router = express.Router();
  *                 description: Name of the subject (must be unique)
  *               banner:
  *                 type: string
- *                 example: https://example.com/banner.jpg
- *                 description: URL of the subject banner (optional)
+ *                 format: binary
+ *                 description: Image file for the subject banner (optional)
  *     responses:
  *       201:
  *         description: Subject created successfully
@@ -38,16 +40,14 @@ const router = express.Router();
  *         description: Server error
  */
 router.post(
-    '/create',   
+    '/create',
     authenticateToken,
-    authenticateAdmin, 
+    authenticateAdmin,
+    upload.single('banner'), 
     body('name')
-        .notEmpty().withMessage('Subject name is required')
-        .isString().withMessage('Subject name must be a string')
-        .isLength({ max: 255 }).withMessage('Subject name must not exceed 255 characters'),
-    body('banner')
-        .optional()
-        .isURL().withMessage('Banner must be a valid URL'),
+      .notEmpty().withMessage('Subject name is required')
+      .isString().withMessage('Subject name must be a string')
+      .isLength({ max: 255 }).withMessage('Subject name must not exceed 255 characters'),
     validate,
     SubjectsController.createSubject
 );

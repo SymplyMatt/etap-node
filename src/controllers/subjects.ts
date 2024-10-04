@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authenticateToken';
 import Subject from '../models/Subject';
 import Topic from '../models/Topic';
+import uploadImageToCloudinary from '../config/uploadImage';
 
 class SubjectsController {
     public static async createSubject(req: AuthRequest, res: Response) {
@@ -9,13 +10,30 @@ class SubjectsController {
             ...req.body,
             createdBy: req.id,
         };
-
+    
         try {
-            const subject = await Subject.create(subjectData);
-            return res.status(201).json({
-                message: 'Subject created successfully',
-                subject,
-            });
+            const image = req.file;
+            let bannerUrl;
+    
+            if (image) {
+                const imageUrl = await uploadImageToCloudinary({
+                    file: image.path,
+                    folder: 'subjects',
+                    publicId: req.id
+                });
+                bannerUrl = imageUrl;
+                subjectData.banner = bannerUrl;
+    
+                const subject = await Subject.create(subjectData);
+                return res.status(201).json({
+                    message: 'Subject created successfully',
+                    subject,
+                });
+            } else {
+                return res.status(400).json({
+                    error: 'Subject banner is required',
+                });
+            }
         } catch (error: any) {
             console.error(error);
             return res.status(500).json({
@@ -60,7 +78,7 @@ class SubjectsController {
                 where: { id },
                 include: {
                     model: Topic,
-                    as: 'topics', 
+                    as: 'topics',
                 },
             });
 
@@ -82,20 +100,20 @@ class SubjectsController {
     }
 
     public static async getSubjects(req: AuthRequest, res: Response) {
-        const page: number = parseInt(req.query.page as string) || 1; 
-        const limit: number = parseInt(req.query.limit as string) || 10; 
+        const page: number = parseInt(req.query.page as string) || 1;
+        const limit: number = parseInt(req.query.limit as string) || 10;
 
         try {
             const { count, rows } = await Subject.findAndCountAll({
                 include: {
                     model: Topic,
-                    as: 'topics', 
+                    as: 'topics',
                 },
                 limit,
-                offset: (page - 1) * limit, 
+                offset: (page - 1) * limit,
             });
 
-            const totalPages = Math.ceil(count / limit); 
+            const totalPages = Math.ceil(count / limit);
 
             return res.status(200).json({
                 message: 'Subjects retrieved successfully',
@@ -113,4 +131,4 @@ class SubjectsController {
     }
 }
 
-export default SubjectsController;
+export default SubjectsController

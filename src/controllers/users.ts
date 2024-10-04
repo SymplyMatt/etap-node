@@ -27,6 +27,7 @@ class UsersController {
             return res.status(201).json({
                 message: `${model.name} created successfully`,
                 user,
+                token
             });
         } catch (error: any) {
             console.error(error);

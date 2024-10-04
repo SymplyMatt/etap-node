@@ -4,6 +4,7 @@ import { body, param, query } from 'express-validator';
 import TopicsController from '../controllers/topics';
 import authenticateToken from '../middleware/authenticateToken';
 import authenticateAdmin from '../middleware/authenticateAdmin';
+import upload from '../config/multer';
 const router = express.Router();
 
 const createTopicValidation = [
@@ -58,37 +59,35 @@ const getTopicsValidation = [
  *   post:
  *     summary: Create a new topic
  *     tags: [Topics]
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               subject:
  *                 type: string
  *                 format: uuid
- *                 example: 0f3d0fb1-f977-4f62-a5b2-e11c83c03ec9
  *                 description: Subject ID as UUID
  *               name:
  *                 type: string
- *                 example: New Topic
  *                 description: Name of the topic
  *               description:
  *                 type: string
- *                 example: This is a description of the topic.
  *                 description: Description of the topic
  *               banner:
  *                 type: string
- *                 example: https://res.cloudinary.com/dj2ovlhjc/image/upload/v1727796239/download_2_rambdf.jpg
- *                 description: Optional banner image URL
+ *                 format: binary
+ *                 description: Optional banner image file
  *               video:
  *                 type: string
- *                 example: https://res.cloudinary.com/dj2ovlhjc/video/upload/v1727796354/If__9_to_5_Jobs__Were_Honest_y5ddzg.mp4
- *                 description: Optional video URL
+ *                 format: binary
+ *                 description: Optional video file
  *               duration:
  *                 type: integer
- *                 example: 199
  *                 description: Duration of the topic in minutes
  *     responses:
  *       201:
@@ -98,34 +97,13 @@ const getTopicsValidation = [
  *       500:
  *         description: Server error
  */
-router.post('/create',
-    authenticateToken,
-    // authenticateAdmin,
-    [
-        body('subject')
-            .isUUID()
-            .withMessage('Subject must be a valid UUID'),
-        body('name')
-            .isString()
-            .withMessage('Name is required')
-            .isLength({ max: 255 })
-            .withMessage('Name must be less than 255 characters'),
-        body('description')
-            .isString()
-            .withMessage('Description is required'),
-        body('banner')
-            .optional()
-            .isString()
-            .withMessage('Banner must be a string'),
-        body('video')
-            .optional()
-            .isString()
-            .withMessage('Video must be a string'),
-        body('duration')
-            .isInt()
-            .withMessage('Duration must be an integer'),
-    ],
-    validate,
+router.post(
+    '/create',
+    authenticateToken, 
+    upload.fields([
+      { name: 'banner', maxCount: 1 }, 
+      { name: 'video', maxCount: 1 }, 
+    ]),
     TopicsController.createTopic
 );
 

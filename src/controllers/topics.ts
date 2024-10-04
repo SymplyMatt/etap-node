@@ -2,16 +2,48 @@ import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authenticateToken';
 import Topic from '../models/Topic';
 import Subject from '../models/Subject'; 
+import uploadImageToCloudinary from '../config/uploadImage';
 
 class TopicsController {
     public static async createTopic(req: AuthRequest, res: Response) {
-        const topicData = {
-            ...req.body,
-            createdBy: req.id,
-        };
+        const { name, description, subject, duration } = req.body;
+        let bannerUrl: string | null = null;
+        let videoUrl: string | null = null;
 
         try {
+            if (req.files && typeof req.files === 'object' && 'banner' in req.files) {
+                const bannerFiles = req.files['banner'] as Express.Multer.File[];
+                if (bannerFiles && bannerFiles.length > 0) {
+                    bannerUrl = await uploadImageToCloudinary({
+                        file: bannerFiles[0].path,
+                        folder: 'topics/banners',
+                    });
+                }
+            }
+
+            if (req.files && typeof req.files === 'object' && 'video' in req.files) {
+                const videoFiles = req.files['video'] as Express.Multer.File[];
+                if (videoFiles && videoFiles.length > 0) {
+                    videoUrl = await uploadImageToCloudinary({
+                        file: videoFiles[0].path,
+                        folder: 'topics/videos',
+                        resourceType: 'video',
+                    });
+                }
+            }
+
+            const topicData = {
+                name,
+                description,
+                subject,
+                duration,
+                banner: bannerUrl,
+                video: videoUrl,
+                createdBy: req.id,
+            };
+
             const topic = await Topic.create(topicData);
+
             return res.status(201).json({
                 message: 'Topic created successfully',
                 topic,

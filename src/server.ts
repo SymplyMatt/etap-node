@@ -13,11 +13,20 @@ import rateLimiter from './config/rateLimiter';
 import cookieParser from 'cookie-parser';
 import { sequelize } from './config/database';  
 import './models/associations';
+import timeout from 'connect-timeout'; 
+
 dotenv.config();
 validateEnv();
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
+
+
+const timeoutDuration = '1m'; 
+app.use(timeout(timeoutDuration));
+app.use((req, res, next) => {
+    if (!req.timedout) next(); 
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -38,5 +47,4 @@ sequelize.sync({ force: false })
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
     .catch((err) => console.error('Error connecting to the database:', err)
-
 );

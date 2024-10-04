@@ -8,39 +8,43 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-interface UploadImageOptions {
+interface UploadOptions {
   file: string | Buffer;
   folder?: string;
   publicId?: string;
+  resourceType?: 'image' | 'video';
 }
 
 /**
- * Upload an image to Cloudinary and return the URL.
- * @param options - Options for uploading the image
- * @returns A promise that resolves to the image URL
+ * Upload a file (image or video) to Cloudinary and return the URL.
+ * @param options - Options for uploading the file
+ * @returns A promise that resolves to the file URL
  */
-const uploadImageToCloudinary = async (options: UploadImageOptions): Promise<string> => {
+const uploadToCloudinary = async (options: UploadOptions): Promise<string> => {
   return new Promise((resolve, reject) => {
     const uploadOptions: cloudinary.UploadApiOptions = {
       folder: options.folder,
       public_id: options.publicId,
+      resource_type: options.resourceType || 'image', // Default to 'image' unless specified
     };
 
     if (typeof options.file === 'string') {
       // Handle file path or URL
       cloudinary.v2.uploader.upload(options.file, uploadOptions, (error, result) => {
         if (error) {
-          return reject(new Error(`Failed to upload image: ${error.message}`));
+          return reject(new Error(`Failed to upload file: ${error.message}`));
         }
         resolve(result ? result.secure_url : '');
       });
     } else {
+      // Handle file buffer
       const readableStream = new Readable();
       readableStream.push(options.file);
-      readableStream.push(null); 
+      readableStream.push(null);
+
       cloudinary.v2.uploader.upload_stream(uploadOptions, (error, result) => {
         if (error) {
-          return reject(new Error(`Failed to upload image: ${error.message}`));
+          return reject(new Error(`Failed to upload file: ${error.message}`));
         }
         resolve(result ? result.secure_url : '');
       }).end(readableStream.read());
@@ -48,4 +52,4 @@ const uploadImageToCloudinary = async (options: UploadImageOptions): Promise<str
   });
 };
 
-export default uploadImageToCloudinary;
+export default uploadToCloudinary;

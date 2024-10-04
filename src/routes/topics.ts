@@ -88,7 +88,7 @@ const getTopicsValidation = [
  *                 description: Optional video file
  *               duration:
  *                 type: integer
- *                 description: Duration of the topic in minutes
+ *                 description: Duration of the topic in seconds
  *     responses:
  *       201:
  *         description: Topic created successfully
@@ -149,7 +149,7 @@ router.post(
  *               duration:
  *                 type: integer
  *                 example: 199
- *                 description: Updated duration of the topic in minutes
+ *                 description: Updated duration of the topic in seconds
  *     responses:
  *       200:
  *         description: Topic modified successfully

@@ -178,19 +178,15 @@ class LessonsController {
         const { subjectId } = req.query;
     
         try {
-            // Fetch all topics related to the subject
             const topics = await Topic.findAll({
                 where: { subject: subjectId },
             });
     
-            // Fetch all students
             const students = await Student.findAll({
             });
     
-            // Prepare an array to hold the results
-            const results: StudentLessons[] = []; // Define the type here
+            const results: StudentLessons[] = [];
     
-            // Loop through each student to gather their UserLesson information for each topic
             for (const student of students) {
                 const studentLessons: StudentLessons = {
                     studentId: student.id,

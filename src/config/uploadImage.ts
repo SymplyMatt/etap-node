@@ -1,7 +1,6 @@
 import cloudinary from 'cloudinary';
 import { Readable } from 'stream';
 
-// Configure Cloudinary
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -25,11 +24,10 @@ const uploadToCloudinary = async (options: UploadOptions): Promise<string> => {
     const uploadOptions: cloudinary.UploadApiOptions = {
       folder: options.folder,
       public_id: options.publicId,
-      resource_type: options.resourceType || 'image', // Default to 'image' unless specified
+      resource_type: options.resourceType || 'image',
     };
 
     if (typeof options.file === 'string') {
-      // Handle file path or URL
       cloudinary.v2.uploader.upload(options.file, uploadOptions, (error, result) => {
         if (error) {
           return reject(new Error(`Failed to upload file: ${error.message}`));
@@ -37,7 +35,6 @@ const uploadToCloudinary = async (options: UploadOptions): Promise<string> => {
         resolve(result ? result.secure_url : '');
       });
     } else {
-      // Handle file buffer
       const readableStream = new Readable();
       readableStream.push(options.file);
       readableStream.push(null);

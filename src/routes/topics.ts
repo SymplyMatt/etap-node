@@ -100,6 +100,7 @@ const getTopicsValidation = [
 router.post(
     '/create',
     authenticateToken, 
+    authenticateAdmin,
     upload.fields([
       { name: 'banner', maxCount: 1 }, 
       { name: 'video', maxCount: 1 }, 
@@ -161,7 +162,7 @@ router.post(
  */
 router.put('/modify',
     authenticateToken,
-    // authenticateAdmin,
+    authenticateAdmin,
     [
         body('id')
             .isString()
